@@ -15,8 +15,10 @@ import joblib
 
 @st.cache_data(ttl=3600)
 def load_data():
-    """Loads dataset from local file or Google Drive."""
-    local_path = "data/training_data.csv"
+    """Loads dataset from local file or GitHub raw link."""
+    # Robust path handling - works regardless of CWD
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    local_path = os.path.join(base_dir, "data", "training_data.csv")
     
     # Try local file first (Robust offline mode)
     if os.path.exists(local_path):
@@ -25,15 +27,20 @@ def load_data():
         except Exception as e:
             st.error(f"Error reading local data: {e}")
     
-    # Fallback to Drive
-    file_id = "1oxygynnHOAU3NU3S8xHRdBS9WA_K1E7y"
-    url = f"https://drive.google.com/uc?id={file_id}"
+    # Fallback to GitHub Raw (More reliable than Drive)
+    url = "https://raw.githubusercontent.com/l05t0ka/Fraud-Job-Offers-Analysis/master/fake_job_postings.csv"
     try:
         response = requests.get(url)
         response.raise_for_status()
         train_df = pd.read_csv(io.BytesIO(response.content))
+        # Optional: Save to local for next time
+        try:
+            os.makedirs(os.path.join(base_dir, "data"), exist_ok=True)
+            train_df.to_csv(local_path, index=False)
+        except:
+            pass
     except Exception as e:
-        st.error(f"Error loading training data from Google Drive: {e}")
+        st.error(f"Error loading training data from Web: {e}")
         train_df = pd.DataFrame()
     return train_df
 
@@ -83,7 +90,9 @@ def prepare_data(df):
 @st.cache_resource(ttl=86400) 
 def train_model(train_df):
     """Trains the XGBoost model with caching."""
-    model_cache_path = "data/model_cache.pkl"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    model_cache_path = os.path.join(base_dir, "data", "model_cache.pkl")
+    local_data_path = os.path.join(base_dir, "data", "training_data.csv")
     
     # Try loading cached model
     if os.path.exists(model_cache_path):
@@ -94,8 +103,8 @@ def train_model(train_df):
 
     if train_df.empty:
         # One last ditch attempt to find data if dataframe is empty but file exists
-        if os.path.exists("data/training_data.csv"):
-             train_df = pd.read_csv("data/training_data.csv")
+        if os.path.exists(local_data_path):
+             train_df = pd.read_csv(local_data_path)
              try:
                 # Basic validation
                 if 'fraudulent' not in train_df.columns:
@@ -142,7 +151,7 @@ def train_model(train_df):
     
     # Cache the result
     try:
-        os.makedirs("data", exist_ok=True)
+        os.makedirs(os.path.join(base_dir, "data"), exist_ok=True)
         joblib.dump((model, tfidf, best_threshold), model_cache_path)
     except Exception as e:
         print(f"Failed to cache model: {e}")
