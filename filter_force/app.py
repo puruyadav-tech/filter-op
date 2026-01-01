@@ -69,8 +69,8 @@ if menu == "Home":
             </p>
         </div>
         """, unsafe_allow_html=True)
-        
-        st.info("The local file `filter_force/data/training_data.csv` was found but is missing the required **'fraudulent'** label column. It appears to be a test dataset.")
+         
+        st.info("The system attempted to load data from local files and GitHub but failed.")
         
         st.markdown("### 🛠️ Manual Setup Required")
         st.markdown("Please upload the correct `fake_job_postings.csv` (containing labels) to retrain the system.")
