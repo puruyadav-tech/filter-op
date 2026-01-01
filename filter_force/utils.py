@@ -23,7 +23,11 @@ def load_data():
     # Try local file first (Robust offline mode)
     if os.path.exists(local_path):
         try:
-            return pd.read_csv(local_path)
+            df = pd.read_csv(local_path)
+            if 'fraudulent' in df.columns:
+                return df
+            else:
+                st.warning("Local dataset corrupted (missing labels). Attempting to recover from web...")
         except Exception as e:
             st.error(f"Error reading local data: {e}")
     
@@ -33,6 +37,12 @@ def load_data():
         response = requests.get(url)
         response.raise_for_status()
         train_df = pd.read_csv(io.BytesIO(response.content))
+        
+        # Verify downloaded data too
+        if 'fraudulent' not in train_df.columns:
+             st.error("Web dataset also missing labels. Please check source.")
+             return pd.DataFrame()
+
         # Optional: Save to local for next time
         try:
             os.makedirs(os.path.join(base_dir, "data"), exist_ok=True)
