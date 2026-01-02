@@ -24,6 +24,16 @@ def get_custom_css():
         header {visibility: hidden;}
         .main .block-container {padding-top: 2rem;}
 
+        /* RESTORE SIDEBAR TOGGLE */
+        [data-testid="stSidebarCollapsedControl"] {
+            visibility: visible !important;
+            color: var(--primary-color) !important;
+            background-color: rgba(15, 23, 42, 0.5); 
+            border-radius: 50%;
+            padding: 4px;
+            z-index: 100000;
+        }
+
         /* HEADERS */
         h1, h2, h3, h4, h5, h6 {
             color: white !important;
