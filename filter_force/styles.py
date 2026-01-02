@@ -11,11 +11,25 @@ def get_custom_css():
             --text-color: #f1f5f9;
         }
 
+        /* ANIMATIONS */
+        @keyframes gradient-bg {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+        
+        @keyframes pulse-glow {
+            0% {box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.4);}
+            70% {box-shadow: 0 0 0 10px rgba(0, 210, 255, 0);}
+            100% {box-shadow: 0 0 0 0 rgba(0, 210, 255, 0);}
+        }
+
         html, body, .stApp {
             background-color: var(--background-dark);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(58, 123, 213, 0.2) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 0, 153, 0.15) 0%, transparent 40%);
+                linear-gradient(125deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            background-size: 400% 400%;
+            animation: gradient-bg 15s ease infinite;
             color: var(--text-color);
             font-family: 'Inter', sans-serif;
         }
@@ -24,14 +38,31 @@ def get_custom_css():
         header {visibility: hidden;}
         .main .block-container {padding-top: 2rem;}
 
-        /* RESTORE SIDEBAR TOGGLE */
+        /* ROBUST SIDEBAR TOGGLE FIX */
         [data-testid="stSidebarCollapsedControl"] {
+            position: fixed !important;
+            top: 1rem;
+            left: 1rem;
+            
             visibility: visible !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            
             color: var(--primary-color) !important;
-            background-color: rgba(15, 23, 42, 0.5); 
+            background-color: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            
             border-radius: 50%;
-            padding: 4px;
-            z-index: 100000;
+            width: 40px;
+            height: 40px;
+            z-index: 999999;
+            transition: all 0.3s ease;
+        }
+        [data-testid="stSidebarCollapsedControl"]:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
         }
 
         /* HEADERS */
@@ -40,37 +71,44 @@ def get_custom_css():
             font-weight: 700;
         }
         h1 {
-            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            background: linear-gradient(to right, #00d2ff, #3a7bd5, #ff0099);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 3.5rem !important;
             padding-bottom: 1rem;
+            background-size: 200% auto;
+            animation: gradient-bg 5s linear infinite;
         }
         
         /* CARDS / CONTAINERS (Glassmorphism) */
         .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
             margin-bottom: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .glass-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            border-color: rgba(0, 210, 255, 0.3);
+            box-shadow: 0 20px 40px -10px rgba(0, 210, 255, 0.15);
         }
 
         /* METRIC CARDS */
         div[data-testid="stMetric"] {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 16px;
+            padding: 20px;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+        div[data-testid="stMetric"]:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 0, 153, 0.3);
         }
         div[data-testid="stMetric"] label {
             color: #94a3b8;
@@ -81,18 +119,20 @@ def get_custom_css():
             background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
             color: white;
             border: none;
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 14px 0 rgba(0, 210, 255, 0.39);
         }
         .stButton > button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 6px 20px 0 rgba(0, 210, 255, 0.23);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 30px 0 rgba(0, 210, 255, 0.45);
         }
+        /* Pulse for primary actions if needed, or applying to all for now as effect */
         .stButton > button:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
 
         /* SIDEBAR */
