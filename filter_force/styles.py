@@ -34,15 +34,29 @@ def get_custom_css():
             font-family: 'Inter', sans-serif;
         }
 
-        /* HIDE DEFAULT HEADER */
-        header {visibility: hidden;}
-        .main .block-container {padding-top: 2rem;}
+        /* HEADER CONFIG - CRITICAL FIX */
+        header {
+            background-color: transparent !important;
+            visibility: visible !important; /* Must be visible for children to work reliably */
+        }
+        
+        /* Hide the decoration bar and the toolbar (hamburger menu) */
+        header > .stAppDeployButton { display: none; }
+        header > .stAppDecoration { display: none; }
+        header > div[data-testid="stToolbar"] { 
+            visibility: hidden; 
+            display: none;
+        }
+
+        .main .block-container {
+            padding-top: 2rem;
+        }
 
         /* ROBUST SIDEBAR TOGGLE FIX */
         [data-testid="stSidebarCollapsedControl"] {
             position: fixed !important;
-            top: 1rem;
-            left: 1rem;
+            top: 20px;
+            left: 20px;
             
             visibility: visible !important;
             display: flex !important;
@@ -50,22 +64,31 @@ def get_custom_css():
             justify-content: center;
             
             color: var(--primary-color) !important;
-            background-color: rgba(15, 23, 42, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
+            background-color: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
             
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            z-index: 999999;
-            transition: all 0.3s ease;
+            width: 44px; /* Slightly larger */
+            height: 44px;
+            z-index: 2147483647 !important; /* Maximum Z-Index */
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         [data-testid="stSidebarCollapsedControl"]:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+            transform: scale(1.15) rotate(180deg); /* Add playful rotation */
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+            background-color: rgba(30, 41, 59, 1);
         }
-
-        /* HEADERS */
+        
+        /* Ensure the icon inside is also visible */
+        [data-testid="stSidebarCollapsedControl"] > img,
+        [data-testid="stSidebarCollapsedControl"] > svg {
+            width: 24px !important;
+            height: 24px !important;
+            fill: var(--primary-color) !important;
+            color: var(--primary-color) !important;
+        }
         h1, h2, h3, h4, h5, h6 {
             color: white !important;
             font-weight: 700;
